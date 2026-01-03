@@ -20,11 +20,18 @@ module Linefeed
     raise Error, "already closed" if @__linefeed_closed
     raise ArgumentError, "no line handler" unless per_line
 
+    @__linefeed_called = true
     @__linefeed_buffer ||= +"".b
     @__linefeed_buffer << chunk
 
-    while (eol = @__linefeed_buffer.index("\n"))
-      per_line.call(@__linefeed_buffer.slice!(0..eol)) # includes the "\n"
+    start = 0
+    while (eol = @__linefeed_buffer.index("\n", start))
+      per_line.call(@__linefeed_buffer.slice(start..eol)) # includes the "\n"
+      start = eol + 1
+    end
+
+    if start > 0
+      @__linefeed_buffer = @__linefeed_buffer.byteslice(start, @__linefeed_buffer.bytesize - start) || +"".b
     end
 
     self
