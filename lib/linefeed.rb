@@ -6,14 +6,11 @@ module Linefeed
   class Error < StandardError; end
 
   def linefeed(&default_proc)
+    raise ArgumentError, "linefeed already called" if @__linefeed_called
     @__linefeed_default = default_proc
-    __linefeed_reset
-    self
-  end
-
-  def __linefeed_reset
     @__linefeed_buffer = +"".b
     @__linefeed_closed = false
+    @__linefeed_called = true
     self
   end
 
