@@ -1,9 +1,16 @@
 # frozen_string_literal: true
 require_relative 'demo'
+require 'linefeed'
 
 # Handling the protocol via super
 module Demo
-  class Escaped < Consumer
+  class Escaped
+    include Linefeed
+
+    def initialize(output)
+      @output = output
+    end
+
     def escape(line)
       line.sub(/^(-|From )/, "- \\1")
     end

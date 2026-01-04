@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-require_relative "../lib/linefeed"
 require_relative "demo_helper"
 
 if $0 == __FILE__

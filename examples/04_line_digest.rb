@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 require_relative 'demo'
+require 'linefeed'
 require "digest"
 
 # Only outputs at close

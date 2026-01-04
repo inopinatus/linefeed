@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 require_relative 'demo'
+require 'linefeed'
 require "digest"
 
 # Not actually using Linefeed, but speaking the same protocol,

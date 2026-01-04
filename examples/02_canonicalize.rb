@@ -1,14 +1,21 @@
 # frozen_string_literal: true
 require_relative 'demo'
+require 'linefeed'
 
 # Per-line processing with headers & trailers
 module Demo
-  class Canonicalize < Consumer
-    def initialize(*)
-      super
+  class Canonicalize
+    include Linefeed
+
+    def initialize(output)
+      @output = output
       @output << "---------- START\r\n"
       @output << "Canonicalized: yes\r\n"
       @output << "\r\n"
+
+      linefeed do |line|
+        output << process_line(line)
+      end
     end
 
     def process_line(line)

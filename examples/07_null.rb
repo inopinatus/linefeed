@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 require_relative 'demo'
+require 'linefeed'
 
 # Intentionally fails to setup the feed and suffers for it.
 # Don't do this.

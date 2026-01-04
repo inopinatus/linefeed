@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 require_relative 'demo'
+require 'linefeed'
 
 # Simplest possible example
 module Demo
