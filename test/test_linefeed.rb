@@ -37,27 +37,60 @@ class LinefeedTest < Minitest::Test
 
   def test_basic_yield
     receiver = StandardReceiver.new
-    receiver << "a\nb\n"
+    receiver << "olleh\ndlrow\n"
+    receiver.close
 
-    assert_equal ["a\n", "b\n"], receiver.lines
+    assert_equal ["olleh\n", "dlrow\n"], receiver.lines
   end
 
   def test_works_across_chunks
     receiver = StandardReceiver.new
-    receiver << "a"
+    receiver << "it's"
     receiver << "\n"
-    receiver << "b"
+    receiver << "been"
     receiver << "\n"
-
-    assert_equal ["a\n", "b\n"], receiver.lines
-  end
-
-  def test_flush_unterminated
-    receiver = StandardReceiver.new
-    receiver << "tail"
+    receiver << "emotional"
+    receiver << "\n"
     receiver.close
 
-    assert_equal ["tail"], receiver.lines
+    assert_equal ["it's\n", "been\n", "emotional\n"], receiver.lines
+  end
+
+  def test_unterminated
+    receiver = StandardReceiver.new
+    receiver << "splash"
+    receiver.close
+
+    assert_equal ["splash"], receiver.lines
+  end
+
+  def test_unterminated_across_chunks
+    receiver = StandardReceiver.new
+    receiver << "abc"
+    receiver << "def"
+    receiver.close
+
+    assert_equal ["abcdef"], receiver.lines
+  end
+
+  def test_embedded_lines
+    receiver = StandardReceiver.new
+    receiver << "turning\nand\nturn"
+    receiver << "ing\nin\nthe\nwide"
+    receiver << "ning\ngyre"
+    receiver.close
+
+    assert_equal ["turning\n", "and\n", "turning\n", "in\n", "the\n", "widening\n", "gyre"], receiver.lines
+  end
+
+  def test_custom_handlers
+    receiver = CustomReceiver.new
+
+    receiver << "quick"
+    receiver << "\n"
+    receiver << "fox"
+    receiver.close
+    assert_equal ["line:quick\n", "eof:fox"], receiver.lines
   end
 
   def test_empty_close_after_start_does_nothing
@@ -80,16 +113,6 @@ class LinefeedTest < Minitest::Test
 
     assert_raises(Linefeed::MissingHandler) { obj << "a\n" }
     assert_raises(Linefeed::MissingHandler) { obj.close }
-  end
-
-  def test_custom_handlers
-    receiver = CustomReceiver.new
-
-    receiver << "a"
-    receiver << "\n"
-    receiver << "b"
-    receiver.close
-    assert_equal ["line:a\n", "eof:b"], receiver.lines
   end
 
   def test_double_close
