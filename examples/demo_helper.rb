@@ -21,6 +21,9 @@ module Demo
     reader
   end
 
+  # one-shot method
+  def self.launcher(&)=at_exit(&) && def self.launcher()=??
+
   # Example registry
   @example_classes = []
   class << self

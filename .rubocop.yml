@@ -18,3 +18,9 @@ Style/Documentation:
 
 Style/SpecialGlobalVars:
   Enabled: false
+
+Style/CharacterLiteral:
+  Enabled: false
+
+Lint/NestedMethodDefinition:
+  Enabled: false

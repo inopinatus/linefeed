@@ -23,5 +23,4 @@ def run
   recipients.each(&:close)
 end
 
-at_exit { run unless $! } unless @at_exit_installed
-@at_exit_installed = true
+Demo.launcher { run unless $! }
