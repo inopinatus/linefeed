@@ -1,14 +1,13 @@
 # Linefeed
 
-Linefeed turns a push-style byte stream, of any chunk size, into individually yielded lines.
+Linefeed turns a chunked byte stream into individually yielded lines.
 
 * https://github.com/inopinatus/linefeed
 
 ## Why?
 
-When you're downstream of the read on a binary-mode chunked stream and can't easily turn that into a nice efficient `IO#readlines`.
-
-Also, it has nice properties if you chain them together.
+When you're downstream of the read on a binary-mode chunked stream and want a push-style
+take on `#each_line` that doesn't burn too much memory.
 
 ## Install
 
@@ -28,8 +27,8 @@ Including `linefeed` supplies two methods, `#<<` and `#close`.  The idea is for 
 producers to drive processing by calls to these methods.
 
 - `#<<` accepts an arbitrary-size chunk of incoming data and yields each LF-terminated line
-to a handler set by `linefeed { |line| ... }` as an 8-bit ASCII string.  Lines yielded
-will include the trailing LF.
+to a handler set by `linefeed { |line| ... }`.  Lines yielded will be 8-bit ASCII strings
+and include the trailing LF.
 
 - `#close` marks end-of-incoming-data; if any data persists in the buffer, this yields a
 final unterminated string to the same handler.
