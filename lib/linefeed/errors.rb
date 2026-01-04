@@ -14,6 +14,7 @@ module Linefeed
     end
   end
 
-  # Raised when no handler is provided for line processing.
+  # Raised when no handler is provided for line processing. Subclass of
+  # {ArgumentError}[https://docs.ruby-lang.org/en/master/ArgumentError.html]
   class MissingHandler < ArgumentError; end
 end
