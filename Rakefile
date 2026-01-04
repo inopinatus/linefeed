@@ -1,5 +1,6 @@
 require "bundler/setup"
 require 'bundler/gem_tasks'
+require "rdoc/task"
 require "rake/testtask"
 
 Rake::TestTask.new do |t|
@@ -8,9 +9,17 @@ Rake::TestTask.new do |t|
   t.test_files = FileList["test/**/test_*.rb"]
 end
 
-task default: :test
+Rake::RDocTask.new do |rdoc|
+  rdoc.main = "README.md"
+  rdoc.rdoc_dir = "doc"
+  rdoc.rdoc_files.include("README.md", "lib/**/*.rb")
+  rdoc.title = 'Linefeed RDoc'
+end
 
 desc "Run the examples"
 task :demo do
   ruby "examples/demo.rb"
 end
+
+task default: :test
+

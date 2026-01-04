@@ -8,15 +8,42 @@ module Linefeed
   class ClosedError < Error; end
   class MissingHandler < ArgumentError; end
 
-  # Setup linefeed and install default handler.
+  # Set up linefeed processing and install a default handler.
+  #
+  # call-seq:
+  #   linefeed { |line| ... } -> self
+  #
+  # The handler receives each LF-terminated line as a binary +String+ and will
+  # be invoked on #<< and #close unless a per-call block is provided.  A final
+  # unterminated line may be yielded by #close.
+  #
+  # Raises MissingHandler if no block is given.  
+  # Raises StartError if linefeed was already started.  
+  # Raises ClosedError if linefeed was already closed.
   def linefeed(&handler)
     raise MissingHandler unless block_given?
     linefeed_start(&handler)
   end
 
-  # Called per binary chunk by push-type sources.
+  # Push a binary chunk to the receiver.
   #
-  # Consumers overriding this method should use super { |line| ... }
+  # call-seq:
+  #   self << chunk -> self
+  #   self << chunk { |line| ... } -> self
+  #
+  # The receiver yields complete LF-terminated lines to the handler.
+  # Any # trailing partial line is buffered until the next chunk or #close.
+  # Lines will be 8-bit ASCII +String+ values and always include the trailing +\n+.
+  #
+  # If you override this method, call +super+ with the chunk and pass a block
+  # to receive each line:
+  #
+  #   def <<(chunk)
+  #     super(chunk) { |line| puts escape(line) }
+  #   end
+  #
+  # Raises MissingHandler if no handler is given and no default handler was installed.  
+  # Raises ClosedError if called after #close.
   def <<(chunk, &handler)
     handler ||= @__linefeed_handler
     raise MissingHandler unless handler
@@ -49,10 +76,27 @@ module Linefeed
     self
   end
 
-  # Called at end-of-stream. Note that it is *not* an error to call
-  # this without a prior call to #<< or #linefeed.
+  # Close the stream and flush any buffered data.
   #
-  # Consumers overriding this method should use super { |line| ... }
+  # call-seq:
+  #   close -> self
+  #   close { |line| ... } -> self
+  #
+  # If the buffer contains an unterminated line, it is yielded once to the
+  # handler as a binary +String+ without a trailing +\n+.
+
+  # It is valid to call #close without any prior calls to #<< or #linefeed.
+  #
+  # If you override this method, call +super+ and pass a block to receive the
+  # final partial line:
+  #
+  #   def close
+  #     super { |line| puts escape(line) }
+  #     puts "-- all done."
+  #   end
+  #
+  # Raises MissingHandler if no handler is given and no default handler was installed.  
+  # Raises ClosedError if called more than once.
   def close(&handler)
     handler ||= @__linefeed_handler
     raise MissingHandler unless handler
