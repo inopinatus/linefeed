@@ -18,11 +18,11 @@ module Linefeed
   #
   # Consumers overriding this method should use super { |line| ... }
   def <<(chunk, &handler)
-    handler ||= @lf_handler
+    handler ||= @__linefeed_handler
     raise MissingHandler unless handler
-    raise ClosedError if @lf_closed
-    linefeed_start unless @lf_started
-    buf = @lf_buffer
+    raise ClosedError if @__linefeed_closed
+    linefeed_start unless @__linefeed_started
+    buf = @__linefeed_buffer
 
     if chunk.getbyte(-1) == 10
       if buf.empty?
@@ -42,7 +42,7 @@ module Linefeed
       if line.getbyte(-1) == 10
         handler.call(line)
       else
-        @lf_buffer = line
+        @__linefeed_buffer = line
       end
     end
 
@@ -54,24 +54,24 @@ module Linefeed
   #
   # Consumers overriding this method should use super { |line| ... }
   def close(&handler)
-    handler ||= @lf_handler
+    handler ||= @__linefeed_handler
     raise MissingHandler unless handler
-    raise ClosedError if @lf_closed
-    @lf_closed = true
-    return self if !@lf_buffer || @lf_buffer.empty?
-    handler.call(@lf_buffer.dup)
-    @lf_buffer.clear
+    raise ClosedError if @__linefeed_closed
+    @__linefeed_closed = true
+    return self if !@__linefeed_buffer || @__linefeed_buffer.empty?
+    handler.call(@__linefeed_buffer.dup)
+    @__linefeed_buffer.clear
     self
   end
 
   private
   def linefeed_start(&handler)
-    raise StartError, "already started" if @lf_started
-    raise ClosedError if @lf_closed
-    @lf_handler = handler
-    @lf_buffer = +"".b
-    @lf_closed = false
-    @lf_started = true
+    raise StartError, "already started" if @__linefeed_started
+    raise ClosedError if @__linefeed_closed
+    @__linefeed_handler = handler
+    @__linefeed_buffer = +"".b
+    @__linefeed_closed = false
+    @__linefeed_started = true
     self
   end
 end
