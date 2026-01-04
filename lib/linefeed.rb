@@ -2,6 +2,11 @@
 
 require "linefeed/version"
 
+# Include Linefeed to enable handling of chunked binary streams as yielded
+# lines.
+#
+# See README for more.
+
 module Linefeed
   class Error < StandardError; end
   class StartError < Error; end

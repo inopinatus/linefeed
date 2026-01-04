@@ -10,11 +10,12 @@ Rake::TestTask.new do |t|
 end
 
 Rake::RDocTask.new do |rdoc|
-  rdoc.rdoc_files.include("README.md", "lib/**/*.rb")
+  rdoc.rdoc_files.include("README.md", "LICENSE", "lib/**/*.rb")
   rdoc.main = "README.md"
   rdoc.rdoc_dir = "doc"
   rdoc.generator = 'aliki'
   rdoc.title = 'Linefeed RDoc'
+  rdoc.options << "--show-hash"
 end
 
 desc "Run the examples"
