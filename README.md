@@ -76,18 +76,16 @@ def close
 end
 ```
 
-See `examples/` for more, like daisy-chaining, or updating a digest.
+See Examples for more, like daisy-chaining, or updating a digest.
 
-## Examples
+## Note
 
-Run `examples/demo.rb` and review the numbered examples it includes.
-
-If testing with cooked interactive input at the console, note that `linefeed`'s examples necessarily read in binary mode, so ^D may not be instant EOF.
+If testing with cooked interactive input at the console, note that linefeed's demo naturally reads in binary mode, so `^D` may not be instant EOF.
 
 ## License
 
-MIT. Copyright (c) 2025 inopinatus.
+MIT license. Copyright (c) 2025 inopinatus
 
 ## Contributing
 
-At https://github.com/inopinatus/linefeed.
+Visit https://github.com/inopinatus/linefeed to open a PR.
