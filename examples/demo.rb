@@ -11,10 +11,11 @@ end
 
 def run
   recipients = Demo.setup_examples
+  input = Demo.input_pipe(ARGF)
   maxlen = 8192
   chunk = ''.b
 
-  while $stdin.read(maxlen, chunk)
+  while input.read(maxlen, chunk) && !chunk.empty?
     recipients.each do |r|
       r << chunk
     end

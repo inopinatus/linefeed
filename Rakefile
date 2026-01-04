@@ -21,7 +21,7 @@ file 'tmp/Examples.md' => ['tmp', *FileList['examples/*.rb']] do |f|
       # Examples
 
       Contents of
-      {inopinatus/linefeed/examples/}[https://github.com/inopinatus/linefeed/tree/main/examples],
+      {linefeed:examples/}[https://github.com/inopinatus/linefeed/tree/main/examples],
       concatenated here for easy consumption.
 
     HEAD

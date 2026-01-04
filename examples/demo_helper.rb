@@ -8,6 +8,19 @@ module Demo
     def close()=puts "#{@prefix} closed."
   end
 
+  # decouple from tty if demo run interactively
+  def self.input_pipe(source)
+    return source unless $stdin.tty?
+
+    reader, writer = IO.pipe
+    Thread.new do
+      IO.copy_stream(source, writer)
+    ensure
+      writer.close unless writer.closed?
+    end
+    reader
+  end
+
   # Example registry
   @example_classes = []
   class << self

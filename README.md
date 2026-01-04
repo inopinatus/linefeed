@@ -78,10 +78,6 @@ end
 
 See Examples for more, like daisy-chaining, or updating a digest.
 
-## Note
-
-If testing with cooked interactive input at the console, note that linefeed's demo naturally reads in binary mode, so `^D` may not be instant EOF.
-
 ## License
 
 MIT license. Copyright (c) 2026 inopinatus
