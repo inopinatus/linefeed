@@ -22,13 +22,9 @@ module Linefeed
     raise MissingHandler unless handler
     raise ClosedError if @lf_closed
     linefeed_start unless @lf_started
-
-    # lexicals are faster than ivars
     buf = @lf_buffer
-    start = @lf_start
 
-    # let C ruby handle if it's already LF-terminated
-    if start == 0 && chunk.getbyte(-1) == 10
+    if chunk.getbyte(-1) == 10
       if buf.empty?
         chunk.each_line("\n", &handler)
       else
@@ -39,17 +35,15 @@ module Linefeed
       return self
     end
 
-    buf << chunk # maybe expensive
-    while (eol = buf.byteindex("\n", start))
-      handler.call(buf.byteslice(start..eol)) # definitely expensive
-      start = eol + 1
-    end
+    buf << chunk
+    return self if chunk.index("\n").nil?
 
-    if start == buf.bytesize
-      buf.clear
-      @lf_start = 0
-    else
-      @lf_start = start
+    buf.each_line("\n") do |line|
+      if line.getbyte(-1) == 10
+        handler.call(line)
+      else
+        @lf_buffer = line
+      end
     end
 
     self
@@ -65,8 +59,8 @@ module Linefeed
     raise ClosedError if @lf_closed
     @lf_closed = true
     return self if !@lf_buffer || @lf_buffer.empty?
-
-    handler.call(@lf_buffer.slice!(0, @lf_buffer.bytesize)) # yield final unterminated line
+    handler.call(@lf_buffer.dup)
+    @lf_buffer.clear
     self
   end
 
@@ -78,7 +72,6 @@ module Linefeed
     @lf_buffer = +"".b
     @lf_closed = false
     @lf_started = true
-    @lf_start = 0
     self
   end
 end
