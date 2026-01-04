@@ -9,17 +9,18 @@ Gem::Specification.new do |gem|
   gem.email = "inopinatus@hey.com"
   gem.summary = "Yield lines from arbitrarily chunked byte streams"
   gem.description = "Linefeed turns a push-style byte stream, of any chunk size, into individually yielded lines."
-  gem.homepage = "https://github.com/inopinatus/linefeed"
+  gem.homepage = "https://inopinatus.github.io/linefeed/"
   gem.license = "MIT"
   gem.required_ruby_version = ">= 3.4"
   gem.files = Dir["lib/**/*.rb", "README.md", "LICENSE", "examples/**/*", "test/**/*"]
   gem.require_paths = ["lib"]
   gem.metadata = {
-    "homepage_uri" => gem.homepage,
-    "source_code_uri" => gem.homepage
+    "homepage_uri" => "https://inopinatus.github.io/linefeed/",
+    "source_code_uri" => "https://github.com/inopinatus/linefeed",
+    "bug_tracker_uri" => "https://github.com/inopinatus/linefeed/issues",
+    "rubygems_mfa_required" => "true",
   }
-
   gem.add_development_dependency "minitest"
   gem.add_development_dependency "rake"
-  gem.add_development_dependency "irb"
+  gem.add_development_dependency "rdoc", '>= 7'
 end

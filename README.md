@@ -3,6 +3,7 @@
 Linefeed turns a chunked byte stream into individually yielded lines.
 
 * https://github.com/inopinatus/linefeed
+* https://inopinatus.github.io/linefeed/
 
 ## Why?
 
