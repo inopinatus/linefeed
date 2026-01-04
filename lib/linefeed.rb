@@ -4,48 +4,81 @@ require "linefeed/version"
 
 module Linefeed
   class Error < StandardError; end
+  class StartError < Error; end
+  class ClosedError < Error; end
+  class MissingHandler < ArgumentError; end
 
-  def linefeed(&default_proc)
-    raise ArgumentError, "linefeed already called" if @__linefeed_called
-    @__linefeed_default = default_proc
-    @__linefeed_buffer = +"".b
-    @__linefeed_closed = false
-    @__linefeed_called = true
-    self
+  # Setup linefeed and install default handler.
+  def linefeed(&handler)
+    raise MissingHandler unless block_given?
+    linefeed_start(&handler)
   end
 
-  # Called by push-type source to write to us.
-  def <<(chunk, &per_line)
-    per_line ||= @__linefeed_default
-    raise Error, "already closed" if @__linefeed_closed
-    raise ArgumentError, "no line handler" unless per_line
+  # Called per binary chunk by push-type sources.
+  #
+  # Consumers overriding this method should use super { |line| ... }
+  def <<(chunk, &handler)
+    handler ||= @lf_handler
+    raise MissingHandler unless handler
+    raise ClosedError if @lf_closed
+    linefeed_start unless @lf_started
 
-    @__linefeed_called = true
-    @__linefeed_buffer ||= +"".b
-    @__linefeed_buffer << chunk
+    # lexicals are faster than ivars
+    buf = @lf_buffer
+    start = @lf_start
 
-    start = 0
-    while (eol = @__linefeed_buffer.index("\n", start))
-      per_line.call(@__linefeed_buffer.slice(start..eol)) # includes the "\n"
+    # let C ruby handle if it's already LF-terminated
+    if start == 0 && chunk.getbyte(-1) == 10
+      if buf.empty?
+        chunk.each_line("\n", &handler)
+      else
+        buf << chunk
+        buf.each_line("\n", &handler)
+        buf.clear
+      end
+      return self
+    end
+
+    buf << chunk # maybe expensive
+    while (eol = buf.byteindex("\n", start))
+      handler.call(buf.byteslice(start..eol)) # definitely expensive
       start = eol + 1
     end
 
-    if start > 0
-      @__linefeed_buffer = @__linefeed_buffer.byteslice(start, @__linefeed_buffer.bytesize - start) || +"".b
+    if start == buf.bytesize
+      buf.clear
+      @lf_start = 0
+    else
+      @lf_start = start
     end
 
     self
   end
 
-  # Called at end-of-stream.
-  def close(&per_line)
-    per_line ||= @__linefeed_default
-    raise Error, "already closed" if @__linefeed_closed
-    raise ArgumentError, "no line handler" unless per_line
-    @__linefeed_closed = true
-    return self if !@__linefeed_buffer || @__linefeed_buffer.empty?
+  # Called at end-of-stream. Note that it is *not* an error to call
+  # this without a prior call to #<< or #linefeed.
+  #
+  # Consumers overriding this method should use super { |line| ... }
+  def close(&handler)
+    handler ||= @lf_handler
+    raise MissingHandler unless handler
+    raise ClosedError if @lf_closed
+    @lf_closed = true
+    return self if !@lf_buffer || @lf_buffer.empty?
 
-    per_line.call(@__linefeed_buffer.slice!(0, @__linefeed_buffer.bytesize)) # final unterminated line
+    handler.call(@lf_buffer.slice!(0, @lf_buffer.bytesize)) # yield final unterminated line
+    self
+  end
+
+  private
+  def linefeed_start(&handler)
+    raise StartError, "already started" if @lf_started
+    raise ClosedError if @lf_closed
+    @lf_handler = handler
+    @lf_buffer = +"".b
+    @lf_closed = false
+    @lf_started = true
+    @lf_start = 0
     self
   end
 end
