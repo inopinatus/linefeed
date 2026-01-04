@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require "linefeed/version"
-require "linefeed/errors"
+require 'linefeed/version'
+require 'linefeed/errors'
 
 # Include Linefeed to enable handling of chunked binary streams as yielded
 # lines.
@@ -18,12 +18,13 @@ module Linefeed
   # be invoked on #<< and #close unless a per-call block is provided.  A final
   # unterminated line may be yielded by #close.
   #
-  # Raises MissingHandler if no block is given.  
-  # Raises StartError if linefeed was already started.  
+  # Raises MissingHandler if no block is given.<br>
+  # Raises StartError if linefeed was already started.<br>
   # Raises ClosedError if linefeed was already closed.
-  def linefeed(&handler)
+  def linefeed(&)
     raise MissingHandler unless block_given?
-    linefeed_start(&handler)
+
+    linefeed_start(&)
   end
 
   # Push a binary chunk to the receiver.
@@ -43,12 +44,14 @@ module Linefeed
   #     super(chunk) { |line| puts escape(line) }
   #   end
   #
-  # Raises MissingHandler if no handler is given and no default handler was installed.  
+  # Raises MissingHandler if no handler is given and no default handler was installed.<br>
   # Raises ClosedError if called after #close.
+  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
   def <<(chunk, &handler)
     handler ||= @__linefeed_handler
     raise MissingHandler unless handler
     raise ClosedError if @__linefeed_closed
+
     linefeed_start unless @__linefeed_started
     buf = @__linefeed_buffer
 
@@ -76,6 +79,7 @@ module Linefeed
 
     self
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
 
   # Close the stream and flush any buffered data.
   #
@@ -96,25 +100,29 @@ module Linefeed
   #     puts "-- all done."
   #   end
   #
-  # Raises MissingHandler if no handler is given and no default handler was installed.  
+  # Raises MissingHandler if no handler is given and no default handler was installed.<br>
   # Raises ClosedError if called more than once.
   def close(&handler)
     handler ||= @__linefeed_handler
     raise MissingHandler unless handler
     raise ClosedError if @__linefeed_closed
+
     @__linefeed_closed = true
     return self if !@__linefeed_buffer || @__linefeed_buffer.empty?
+
     handler.call(@__linefeed_buffer.dup)
     @__linefeed_buffer.clear
     self
   end
 
   private
+
   def linefeed_start(&handler)
-    raise StartError, "already started" if @__linefeed_started
+    raise StartError, 'already started' if @__linefeed_started
     raise ClosedError if @__linefeed_closed
+
     @__linefeed_handler = handler
-    @__linefeed_buffer = +"".b
+    @__linefeed_buffer = +''.b
     @__linefeed_closed = false
     @__linefeed_started = true
     self

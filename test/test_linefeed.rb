@@ -1,11 +1,12 @@
 # frozen_string_literal: true
 
-require "minitest/autorun"
-require_relative "../lib/linefeed"
+require 'minitest/autorun'
+require_relative '../lib/linefeed'
 
 class LinefeedTest < Minitest::Test
   class StandardReceiver
     include Linefeed
+
     attr_reader :lines
 
     def initialize
@@ -16,6 +17,7 @@ class LinefeedTest < Minitest::Test
 
   class CustomReceiver
     include Linefeed
+
     attr_reader :lines
 
     def initialize
@@ -40,16 +42,16 @@ class LinefeedTest < Minitest::Test
     receiver << "olleh\ndlrow\n"
     receiver.close
 
-    assert_equal ["olleh\n", "dlrow\n"], receiver.lines
+    assert_equal %W[olleh\n dlrow\n], receiver.lines
   end
 
   def test_works_across_chunks
     receiver = StandardReceiver.new
     receiver << "it's"
     receiver << "\n"
-    receiver << "been"
+    receiver << 'been'
     receiver << "\n"
-    receiver << "emotional"
+    receiver << 'emotional'
     receiver << "\n"
     receiver.close
 
@@ -58,19 +60,19 @@ class LinefeedTest < Minitest::Test
 
   def test_unterminated
     receiver = StandardReceiver.new
-    receiver << "splash"
+    receiver << 'splash'
     receiver.close
 
-    assert_equal ["splash"], receiver.lines
+    assert_equal ['splash'], receiver.lines
   end
 
   def test_unterminated_across_chunks
     receiver = StandardReceiver.new
-    receiver << "abc"
-    receiver << "def"
+    receiver << 'abc'
+    receiver << 'def'
     receiver.close
 
-    assert_equal ["abcdef"], receiver.lines
+    assert_equal ['abcdef'], receiver.lines
   end
 
   def test_embedded_lines
@@ -80,31 +82,32 @@ class LinefeedTest < Minitest::Test
     receiver << "ning\ngyre"
     receiver.close
 
-    assert_equal ["turning\n", "and\n", "turning\n", "in\n", "the\n", "widening\n", "gyre"], receiver.lines
+    assert_equal %W[turning\n and\n turning\n in\n the\n widening\n gyre], receiver.lines
   end
 
   def test_custom_handlers
     receiver = CustomReceiver.new
 
-    receiver << "quick"
+    receiver << 'quick'
     receiver << "\n"
-    receiver << "fox"
+    receiver << 'fox'
     receiver.close
-    assert_equal ["line:quick\n", "eof:fox"], receiver.lines
+
+    assert_equal ["line:quick\n", 'eof:fox'], receiver.lines
   end
 
   def test_empty_close_after_start_does_nothing
     receiver = StandardReceiver.new
     receiver.close
 
-    assert_equal [], receiver.lines
+    assert_empty receiver.lines
   end
 
   def test_empty_close_without_start_does_nothing
     receiver = CustomReceiver.new
     receiver.close
 
-    assert_equal [], receiver.lines
+    assert_empty receiver.lines
   end
 
   def test_you_forget_the_handlers
@@ -126,13 +129,12 @@ class LinefeedTest < Minitest::Test
   def test_start_after_close
     receiver = CustomReceiver.new
     receiver.close
-    assert_raises(Linefeed::ClosedError) { receiver.linefeed { |line| ; } }
+    assert_raises(Linefeed::ClosedError) { receiver.linefeed { |_line| nil } }
   end
 
   def test_false_start
     receiver = CustomReceiver.new
-    receiver << ""
-    assert_raises(Linefeed::StartError) { receiver.linefeed { |line| ; } }
+    receiver << ''
+    assert_raises(Linefeed::StartError) { receiver.linefeed { |_line| nil } }
   end
-
 end

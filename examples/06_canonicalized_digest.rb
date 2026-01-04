@@ -1,7 +1,8 @@
 # frozen_string_literal: true
+
 require_relative 'demo'
 require 'linefeed'
-require "delegate"
+require 'delegate'
 
 # Easy chaining
 module Demo

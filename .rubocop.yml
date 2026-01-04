@@ -1,0 +1,17 @@
+AllCops:
+  TargetRubyVersion: 3.4
+  NewCops: enable
+  Exclude:
+    - "doc/**/*"
+    - "tmp/**/*"
+    - "vendor/**/*"
+
+plugins:
+  - rubocop-minitest
+  - rubocop-rake
+
+Layout/LineLength:
+  Max: 120
+
+Style/Documentation:
+  Enabled: false

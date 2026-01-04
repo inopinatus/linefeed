@@ -1,7 +1,8 @@
 # frozen_string_literal: true
+
 require_relative 'demo'
 require 'linefeed'
-require "digest"
+require 'digest'
 
 # Not actually using Linefeed, but speaking the same protocol,
 # consuming entire chunks.
@@ -11,7 +12,7 @@ module Demo
   class ChunkDigest
     def initialize(output)
       @output = output
-      @digest = Digest("SHA256").new
+      @digest = Digest('SHA256').new
     end
 
     def <<(chunk)

@@ -4,7 +4,7 @@ module Demo
   # IO trap
   class Output
     def initialize(klass)=@prefix = klass.to_s
-    def <<(o)=puts "#{@prefix}: #{o.inspect}"
+    def <<(obj)=puts "#{@prefix}: #{obj.inspect}"
     def close()=puts "#{@prefix} closed."
   end
 
@@ -13,9 +13,9 @@ module Demo
   class << self
     def const_added(const_name)
       super
-      if const_get(const_name, false) in Class => klass
-        register(klass)
-      end
+      return unless const_get(const_name, false) in Class => klass
+
+      register(klass)
     end
 
     def register(klass)
@@ -27,4 +27,3 @@ module Demo
     end
   end
 end
-

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require_relative 'demo'
 require 'linefeed'
 
@@ -12,18 +13,18 @@ module Demo
     end
 
     def escape(line)
-      line.sub(/^(-|From )/, "- \\1")
+      line.sub(/^(-|From )/, '- \\1')
     end
 
     def <<(chunk)
-      super(chunk) do |line|
+      super do |line|
         @output << escape(line)
       end
     end
 
     def close
       super do |line|
-        @output << escape(line) + "\n"
+        @output << "#{escape(line)}\n"
       end
     end
   end

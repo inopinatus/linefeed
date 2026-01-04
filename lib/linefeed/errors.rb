@@ -9,7 +9,7 @@ module Linefeed
 
   # Raised when operations are attempted after close.
   class ClosedError < Error
-    def initialize(message = "already closed")
+    def initialize(message = 'already closed')
       super
     end
   end

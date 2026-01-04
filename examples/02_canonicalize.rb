@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require_relative 'demo'
 require 'linefeed'
 
@@ -23,7 +24,7 @@ module Demo
     end
 
     def canonicalize(line)
-      line.chomp.sub(/[ \t]+$/, "") + "\r\n"
+      "#{line.chomp.sub(/[ \t]+$/, '')}\r\n"
     end
 
     def close
