@@ -10,9 +10,10 @@ Rake::TestTask.new do |t|
 end
 
 Rake::RDocTask.new do |rdoc|
+  rdoc.rdoc_files.include("README.md", "lib/**/*.rb")
   rdoc.main = "README.md"
   rdoc.rdoc_dir = "doc"
-  rdoc.rdoc_files.include("README.md", "lib/**/*.rb")
+  rdoc.generator = 'aliki'
   rdoc.title = 'Linefeed RDoc'
 end
 
@@ -22,4 +23,3 @@ task :demo do
 end
 
 task default: :test
-
