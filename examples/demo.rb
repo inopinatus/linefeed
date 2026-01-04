@@ -2,7 +2,7 @@
 
 require_relative 'demo_helper'
 
-if $PROGRAM_NAME == __FILE__
+if $0 == __FILE__
   example_files = Dir[File.join(__dir__, '[0-9][0-9]_*.rb')]
   example_files.each do |path|
     require_relative File.basename(path)
@@ -22,5 +22,5 @@ def run
   recipients.each(&:close)
 end
 
-at_exit { run } unless @at_exit_installed
+at_exit { run unless $! } unless @at_exit_installed
 @at_exit_installed = true

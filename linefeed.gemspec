@@ -12,11 +12,12 @@ Gem::Specification.new do |gem|
   gem.homepage = 'https://inopinatus.github.io/linefeed/'
   gem.license = 'MIT'
   gem.required_ruby_version = '>= 3.4'
-  gem.files = Dir['lib/**/*.rb', 'README.md', 'LICENSE', 'examples/**/*', 'test/**/*']
+  gem.files = Dir['lib/**/*.rb', 'README.md', 'CHANGELOG.md', 'LICENSE', 'examples/**/*']
   gem.require_paths = ['lib']
   gem.metadata = {
     'homepage_uri' => 'https://inopinatus.github.io/linefeed/',
     'source_code_uri' => 'https://github.com/inopinatus/linefeed',
+    'changelog_uri' => 'https://github.com/inopinatus/linefeed/blob/main/CHANGELOG.md',
     'bug_tracker_uri' => 'https://github.com/inopinatus/linefeed/issues',
     'rubygems_mfa_required' => 'true'
   }

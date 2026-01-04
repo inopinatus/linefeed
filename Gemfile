@@ -5,6 +5,7 @@ source 'https://rubygems.org'
 gemspec
 
 group :development, :test do
+  gem 'irb'
   gem 'minitest'
   gem 'rake'
   gem 'rdoc', '>= 7'

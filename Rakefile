@@ -2,10 +2,11 @@
 
 require 'bundler/setup'
 require 'bundler/gem_tasks'
+require 'rake/clean'
 require 'rdoc/task'
 require 'rake/testtask'
-require 'tmpdir'
-require 'fileutils'
+
+CLEAN.include('tmp', 'doc', 'pkg', FileList['*.gem'])
 
 Rake::TestTask.new do |t|
   t.libs << 'lib'
@@ -40,6 +41,7 @@ Rake::RDocTask.new do |rdoc|
   rdoc.generator = 'aliki'
   rdoc.title = 'Linefeed RDoc'
   rdoc.options << '--show-hash'
+  rdoc.options << '--force-output'
 end
 
 desc 'Run the examples'

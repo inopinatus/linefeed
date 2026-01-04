@@ -24,7 +24,7 @@ gem "linefeed"
 
 ## Protocol
 
-Including `linefeed` supplies two methods, `#<<` and `#close`.  The idea is for external
+Including `Linefeed` supplies two methods, `#<<` and `#close`.  The idea is for external
 producers to drive processing by calls to these methods.
 
 - `#<<` accepts an arbitrary-size chunk of incoming data and yields each LF-terminated line
@@ -84,7 +84,7 @@ If testing with cooked interactive input at the console, note that linefeed's de
 
 ## License
 
-MIT license. Copyright (c) 2025 inopinatus
+MIT license. Copyright (c) 2026 inopinatus
 
 ## Contributing
 
