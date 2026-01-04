@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.0.2 - 2026-01-04
+- fix example 6 when run standalone
+
 ## 1.0.1 - 2026-01-04
 - style nits
 
